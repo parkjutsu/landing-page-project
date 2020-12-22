@@ -21,6 +21,7 @@ const navList = document.querySelector('#navbar__list');
 const sections = document.querySelectorAll('section');
 const activeClass = 'your-active-class';
 const sectionStyles = [];
+let navItemStyle;
 let scrollTimer = null;
 
 /**
@@ -28,6 +29,13 @@ let scrollTimer = null;
  * Start Helper Functions
  * 
 */
+// Returns the corresponding navItem for a Section
+const getNavFromSection = (section) => {
+    const navItems = navList.getElementsByTagName('a');
+    const index = section.id.replace('section','') - 1;
+    return navItems[index];
+}
+
 const styleNavBar = () => {
     navList.style.backgroundColor = 'black';
     navList.style.padding = '0.75em';
@@ -40,16 +48,26 @@ const styleNavBar = () => {
     for (const navItem of navItems) {
         navItem.style.color = 'white';
         navItem.style.textDecoration = 'none';
+
+        // Initialize default navItem style
+        if (!navItemStyle) {
+            navItemStyle = navItem.style.cssText;
+        }
     }
 };
 
 // Active section styling for border radius and box shadow taken from 
 // Udacity homepage (udacity.com)
 const styleActiveClass = () => {
-    const element = document.querySelector(`.${activeClass}`);
-    element.style.borderRadius = '8px';
-    element.style.boxShadow = '0 0 4px 0 rgba(17,22,26,.16), 0 2px 4px 0 rgba(17,22,26,.08), 0 4px 8px 0 rgba(17,22,26,.08)';
-    element.style.backgroundColor = 'rgba(0,0,0,0.5)';
+    const section = document.querySelector(`.${activeClass}`);
+    section.style.borderRadius = '8px';
+    section.style.boxShadow = '0 0 4px 0 rgba(17,22,26,.16), 0 2px 4px 0 rgba(17,22,26,.08), 0 4px 8px 0 rgba(17,22,26,.08)';
+    section.style.backgroundColor = 'rgba(0,0,0,0.5)';
+
+    const navItem = getNavFromSection(section);
+    navItem.style.color = '#cc1';
+    navItem.style.borderBottom = '1px solid #cc1';
+    navItem.style.paddingBottom = '0.75em';
 };
 
 const nearViewportTop = (element) => {
@@ -120,8 +138,12 @@ const addActiveClass = () => {
         let index = 0;
         for (const section of sections) {
             if (section.classList.contains(activeClass)) {
+                // Set section style to default
                 section.style.cssText = sectionStyles[index];
                 section.classList.remove(activeClass);
+
+                // Set navItem style to default
+                getNavFromSection(section).style.cssText = navItemStyle;
             }
             index++;
         }

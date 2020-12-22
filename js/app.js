@@ -19,14 +19,63 @@
 */
 const navList = document.querySelector('#navbar__list');
 const sections = document.querySelectorAll('section');
+const activeClass = 'your-active-class';
+const sectionStyles = [];
+let scrollTimer = null;
 
 /**
  * End Global Variables
  * Start Helper Functions
  * 
 */
+const styleNavBar = () => {
+    navList.style.backgroundColor = 'black';
+    navList.style.padding = '0.75em';
+    navList.style.color = 'white';
+    navList.style.display = 'flex';
+    navList.style.justifyContent = 'space-around';
+    navList.style.alignItems = 'center';
+    
+    const navItems = navList.getElementsByTagName('a');
+    for (const navItem of navItems) {
+        navItem.style.color = 'white';
+        navItem.style.textDecoration = 'none';
+    }
+};
 
+// Active section styling for border radius and box shadow taken from 
+// Udacity homepage (udacity.com)
+const styleActiveClass = () => {
+    const element = document.querySelector(`.${activeClass}`);
+    element.style.borderRadius = '8px';
+    element.style.boxShadow = '0 0 4px 0 rgba(17,22,26,.16), 0 2px 4px 0 rgba(17,22,26,.08), 0 4px 8px 0 rgba(17,22,26,.08)';
+    element.style.backgroundColor = 'rgba(0,0,0,0.5)';
+};
 
+const nearViewportTop = (element) => {
+    const elementRect = element.getBoundingClientRect();
+    const divider = window.innerHeight * 0.33;
+
+    return divider >= elementRect.top && divider <= elementRect.bottom;
+};
+
+// Used to save the default styles of each section
+const initSectionStyles = () => {
+    let index = 0;
+    for (const section of sections) {
+        sectionStyles[index] = section.style.cssText;
+        index++;
+    }
+};
+
+// Based off of an answer from Stack Overflow 
+// (https://stackoverflow.com/questions/4620906/how-do-i-know-when-ive-stopped-scrolling)
+const styleAfterScrolling = () => {
+    if (scrollTimer !== null) {
+        clearTimeout(scrollTimer);
+    }
+    scrollTimer = setTimeout(styleActiveClass, 10);
+};
 
 /**
  * End Helper Functions
@@ -34,7 +83,7 @@ const sections = document.querySelectorAll('section');
  * 
 */
 
-// build the nav
+// Build the nav
 const buildNav = () => {
     const docFrag = document.createDocumentFragment();
 
@@ -54,14 +103,31 @@ const buildNav = () => {
 };
 
 // Add class 'active' to section when near top of viewport
-const addActiveClass = (activeSection) => {
-    // const listOfClasses = section.classList;
+const addActiveClass = () => {
+    let activeSection;
 
-    // sections.forEach(section => {
-    //     if (!listOfClasses.contains('active')) {
-    //         listOfClasses.add('active');
-    //     }
-    // });
+    // Get section that is near top of viewport
+    for (const section of sections) {
+        if (nearViewportTop(section)) {
+            activeSection = section;
+            break;
+        }
+    }
+
+    // Remove 'active' class from previous section and add
+    // to current active section
+    if (activeSection && !activeSection.classList.contains(activeClass)) {
+        let index = 0;
+        for (const section of sections) {
+            if (section.classList.contains(activeClass)) {
+                section.style.cssText = sectionStyles[index];
+                section.classList.remove(activeClass);
+            }
+            index++;
+        }
+        activeSection.classList.add(activeClass);
+    }
+    styleAfterScrolling();
 };
 
 // Scroll to anchor ID using scrollTO event
@@ -86,10 +152,12 @@ const scrollToAnchor = (event) => {
 
 // Build menu 
 buildNav();
+styleNavBar();
 
 // Scroll to section on link click
 navList.addEventListener('click', scrollToAnchor);
 
 // Set sections as active
-
-
+initSectionStyles();
+styleActiveClass();
+document.addEventListener('scroll', addActiveClass);

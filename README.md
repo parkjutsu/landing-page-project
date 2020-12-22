@@ -7,3 +7,8 @@ This project was part of the Udacity Front End Web Developer Nanodegree Program.
 * HTML
 * CSS
 * JavaScript
+
+## Authors
+
+* **Michael Virgo** - *HTML and CSS starter code*
+* **Abraham Park** - *JavaScript*

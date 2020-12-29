@@ -1,6 +1,6 @@
 # Landing Page Project
 
-This project was part of the Udacity Front End Web Developer Nanodegree Program. It uses JavaScript to dynamically add an interactive navigational experience for the user.
+This project was created as part of the Udacity Front End Web Developer Nanodegree Program. The goal of this project is to use JavaScript to dynamically add an interactive navigational experience for the user.
 
 ## Built With
 
